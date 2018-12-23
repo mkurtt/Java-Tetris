@@ -32,9 +32,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class Tetris extends JPanel {
-
-	private static final long serialVersionUID = -8715353373678321308L;
-
 	
 	//        [pieces] [rotations] [coordinates]
 	private final Point[][][] Tetraminos = {
@@ -95,6 +92,7 @@ public class Tetris extends JPanel {
 			}
 	};
 	
+        
 	// tetramino colors
 	private final Color[] tetraminoColors = {
 		Color.cyan, Color.blue, Color.orange, Color.yellow, Color.green, Color.pink, Color.red
@@ -104,13 +102,14 @@ public class Tetris extends JPanel {
         static private JButton bt = new JButton("Save");  
         static private JTextField hst = new JTextField();
         
-        
 	private Point pieceOrigin;
 	private int currentPiece; // current piece index
 	private int rotation; // rotation index
 	private ArrayList<Integer> nextPieces = new ArrayList<Integer>();
 	
 	static private boolean GameOver = false;
+        static private int gameSpeed = 1000;
+        static private int linesCleared = 0;
 	
         static class Score implements Comparable<Score>{
             public String PlayerName;
@@ -122,8 +121,12 @@ public class Tetris extends JPanel {
                 return compScore-this.point;
             }
         }
+        
         static private ArrayList<Score> highScoreList = new ArrayList<Score>();
         
+        
+        
+//        static private boolean isPaused = false;
         
         
 
@@ -252,21 +255,26 @@ public class Tetris extends JPanel {
 				deleteRow(j);
 				j += 1;
 				numClears += 1;
+                                linesCleared++;
 			}
 		}
 		
 		switch (numClears) {
 		case 1:
 			score += 10;
+                        gameSpeed-=20;
 			break;
 		case 2:
 			score += 30;
+                        gameSpeed-=30;
 			break;
 		case 3:
 			score += 60;
+                        gameSpeed-=40;
 			break;
 		case 4:
 			score += 100;
+                        gameSpeed-=50;
 			break;
 		}
 	}
@@ -285,47 +293,79 @@ public class Tetris extends JPanel {
 	
 	@Override 
 	public void paintComponent(Graphics g){
-		// Paint the well
-		g.fillRect(0, 0, 26*12, 26*23);
-		for (int i = 0; i < 18; i++) {
-			for (int j = 0; j < 23; j++) {
-				g.setColor(well[i][j]);
-                                if(i > 11){
-                                    g.fillRect(26*i, 26*j, 26, 26);
-                                }else{
-                                    g.fillRect(26*i, 26*j, 25, 25);
-                                }
-				
-			}
-		}
-                // Display scores
-                Scores(g); // TODO Auto-generated catch block
-                
-                // Display next piece
-		drawNextPiece(g);
-                
-		if(GameOver){
-                    GameOver(g);
-		}
-		else{
-                    // Draw the currently falling piece
-                    drawPiece(g);
-		}
+            // Paint the well
+            g.fillRect(0, 0, 26*12, 26*23);
+            for (int i = 0; i < 18; i++) {
+                    for (int j = 0; j < 23; j++) {
+                            g.setColor(well[i][j]);
+                            if(i > 11){
+                                g.fillRect(26*i, 26*j, 26, 26);
+                            }else{
+                                g.fillRect(26*i, 26*j, 25, 25);
+                            }
+
+                    }
+            }
+            
+            // Display UI
+            scores(g); 
+            level(g);
+            linesCleared(g);
+
+            // Display next piece
+            drawNextPiece(g);
+
+            if(GameOver){
+                GameOver(g);
+            }
+            else{
+                // Draw the currently falling piece
+                drawPiece(g);
+            }
 	}
         
+        
+        private void linesCleared(Graphics g){
+            g.setFont(new Font("Arial", Font.BOLD, 15));
+            g.setColor(Color.WHITE);
+            g.drawString("Lines",26*15, 26*8);
+            
+            g.drawString(String.valueOf(linesCleared),26*15+13, 26*9);
+        }
+        
+        
+        private void level(Graphics g){
+            g.setFont(new Font("Arial", Font.BOLD, 15));
+            g.setColor(Color.WHITE);
+            g.drawString("Level",26*13, 26*8);
+            int level;
+            if(gameSpeed > 900) level = 1;
+            else if(gameSpeed > 800) level = 2;
+            else if(gameSpeed > 700) level = 3;
+            else if(gameSpeed > 600) level = 4;
+            else if(gameSpeed > 500) level = 5;
+            else if(gameSpeed > 400) level = 6;
+            else if(gameSpeed > 300) level = 7;
+            else if(gameSpeed > 200) level = 8;
+            else level = 9;
+            
+            g.drawString(String.valueOf(level),26*13+13, 26*9);
+            
+        }
 	
+        
 	private void drawNextPiece(Graphics g) {	
             g.setFont(new Font("Arial", Font.BOLD, 15));
-		g.setColor(Color.WHITE);
-		g.drawString("Next Piece:",26*13, 26*3);
-                
-            
-		g.setColor(tetraminoColors[nextPieces.get(0)]);
-		for (Point p : Tetraminos[nextPieces.get(0)][0]) {
-			g.fillRect((p.x + 13) * 26, 
-					   (p.y + 4) * 26, 
-					   25,        25);
-		}
+            g.setColor(Color.WHITE);
+            g.drawString("Next Piece:",26*13, 26*3);
+
+
+            g.setColor(tetraminoColors[nextPieces.get(0)]);
+            for (Point p : Tetraminos[nextPieces.get(0)][0]) {
+                    g.fillRect((p.x + 13) * 26, 
+                                       (p.y + 4) * 26, 
+                                       25,        25);
+            }
 	}
         
 	
@@ -349,7 +389,7 @@ public class Tetris extends JPanel {
 	}
         
 	
-	private void Scores(Graphics g){
+	private void scores(Graphics g){
 		// High Scores
 		g.setFont(new Font("Arial", Font.BOLD, 15));
 		g.setColor(Color.RED);
@@ -374,6 +414,7 @@ public class Tetris extends JPanel {
 		g.drawString("Score: " + score, 30*12, 25);
 	}
         
+        
         private void ReadHighScoreFile() throws FileNotFoundException, IOException{
             File file = new File("HighScores.txt");
 		if(!file.exists()){
@@ -391,6 +432,11 @@ public class Tetris extends JPanel {
 		}
                 bfr.close();
         }
+        
+//        static private void pause() {
+//            isPaused = !isPaused;
+//        }
+// 
 
 	public static void main(String[] args) throws IOException{
 		
@@ -455,6 +501,9 @@ public class Tetris extends JPanel {
 				case KeyEvent.VK_SPACE:
 					game.dropDown();
 					break;
+//                                case KeyEvent.VK_P:
+//                                        pause();
+//                                        break;
 				} 
 			}
 			
@@ -468,11 +517,13 @@ public class Tetris extends JPanel {
 			@Override public void run() {
 				while (true) {
 					try {
-						Thread.sleep(500);
+//                                            if(!isSPaused){
+						Thread.sleep(gameSpeed);
 						if(GameOver){
 							
 						}else
-							game.dropDown();
+                                                    game.dropDown();
+//                                            }
 					} catch ( InterruptedException e ) {}
 				}
 			}
