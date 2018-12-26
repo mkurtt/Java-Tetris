@@ -110,8 +110,8 @@ public class Tetris extends JPanel {
         static private JButton bt = new JButton("Save");  
         static private JTextField hst = new JTextField();
         
-	private Point pieceOrigin;
-        private Point ghostOrigin;
+	static private Point pieceOrigin;
+        static private Point ghostOrigin;
 	private int currentPiece; // current piece index
 	private int rotation; // rotation index
 	private ArrayList<Integer> nextPieces = new ArrayList<Integer>();
@@ -222,7 +222,7 @@ public class Tetris extends JPanel {
         
 	// Rotate the piece clockwise or counterclockwise
 	public void rotate(int i) {
-            if(isCrazy) clearGhostPiece();
+           // if(isCrazy) clearGhostPiece();
             
 		int newRotation = (rotation + i) % 4;
 		if (newRotation < 0) {
@@ -306,7 +306,7 @@ public class Tetris extends JPanel {
 		for (int j = 21; j > 0; j--) {
 			gap = false;
 			for (int i = 1; i < 11; i++) {
-				if (well[i][j] == Color.BLACK || well[i][j] == Color.LIGHT_GRAY) {
+				if (well[i][j] == Color.BLACK || well[i][j] == Color.DARK_GRAY) {
 					gap = true;
 					break;
 				}
@@ -351,11 +351,13 @@ public class Tetris extends JPanel {
 	}
         
         private void drawGhostPiece(){
-            ghostOrigin = pieceOrigin;
+            ghostOrigin = new Point(pieceOrigin.x, pieceOrigin.y);
+            
             while(!collidesAt(ghostOrigin.x, ghostOrigin.y+1, rotation)){
                 ghostOrigin.y++;
             }
-            staticG.setColor(Color.LIGHT_GRAY);
+            
+            staticG.setColor(Color.DARK_GRAY);
             for (Point p : Tetraminos[currentPiece][rotation]) {
 			staticG.fillRect((p.x + ghostOrigin.x) * 26, 
 					   (p.y + ghostOrigin.y) * 26, 
@@ -363,6 +365,7 @@ public class Tetris extends JPanel {
 		}
             
         }
+        
 //        
 //        private void clearGhostPiece(){
 //            staticG.setColor(Color.BLACK);
