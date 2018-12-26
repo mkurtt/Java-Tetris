@@ -423,25 +423,25 @@ public class Tetris extends JPanel {
         
         private void GameModeStatus(){
             staticG.setFont(new Font("Arial", Font.BOLD, 20));
-            staticG.setColor(Color.WHITE);
-            if(isCrazy) staticG.drawString("Crazy",30*12-15, 17);
-            else staticG.drawString("Classic",30*12-15, 17);
+            staticG.setColor(Color.BLACK);
+            if(isCrazy) staticG.drawString("Crazy",30*12-10, 25);
+            else staticG.drawString("Classic",30*12-15, 25);
         }
             
         
         private void linesCleared(){
             staticG.setFont(new Font("Arial", Font.BOLD, 15));
             staticG.setColor(Color.WHITE);
-            staticG.drawString("Lines",26*15, 26*8);
+            staticG.drawString("Lines",30*13, 26*7);
             
-            staticG.drawString(String.valueOf(linesCleared),26*15+13, 26*9);
+            staticG.drawString(String.valueOf(linesCleared),26*15+13, 26*8);
         }
         
         
         private void level(){
             staticG.setFont(new Font("Arial", Font.BOLD, 15));
             staticG.setColor(Color.WHITE);
-            staticG.drawString("Level",26*13, 26*8);
+            staticG.drawString("Level",30*11, 26*7);
             int level;
             if(gameSpeed > 900) level = 1;
             else if(gameSpeed > 800) level = 2;
@@ -453,7 +453,7 @@ public class Tetris extends JPanel {
             else if(gameSpeed > 200) level = 8;
             else level = 9;
             
-            staticG.drawString(String.valueOf(level),26*13+13, 26*9);
+            staticG.drawString(String.valueOf(level),30*11+18, 26*8);
             
         }
 	
@@ -461,7 +461,7 @@ public class Tetris extends JPanel {
 	private void drawNextPiece() {	
             staticG.setFont(new Font("Arial", Font.BOLD, 15));
             staticG.setColor(Color.WHITE);
-            staticG.drawString("Next Piece:",26*13, 26*3);
+            staticG.drawString("Next Piece:",30*11, 26*3);
 
 
             staticG.setColor(tetraminoColors[nextPieces.get(0)]);
@@ -497,17 +497,17 @@ public class Tetris extends JPanel {
 	
 	private void scores(){
 		// High Scores
-		staticG.setFont(new Font("Arial", Font.BOLD, 15));
+		staticG.setFont(new Font("Arial", Font.BOLD, 18));
 		staticG.setColor(Color.RED);
-		staticG.drawString("--High Scores--", 26*13, 26*15);
+		staticG.drawString("--High Scores--", 26*12+13, 26*15+50);
 		
-		int ScoresY = 415;
+		int ScoresY = 465;
 		
 		
                 for(Score A : highScoreList){
-                    staticG.setFont(new Font("Arial",Font.PLAIN,12));
+                    staticG.setFont(new Font("Arial",Font.PLAIN,18));
                     staticG.setColor(Color.WHITE);
-                    staticG.drawString(A.PlayerName, 350 , ScoresY+= 15);
+                    staticG.drawString(A.PlayerName, 325 , ScoresY+= 15);
                     staticG.drawString(String.valueOf(A.point), 415 , ScoresY);
                 }
                 
@@ -517,7 +517,7 @@ public class Tetris extends JPanel {
 		// Current Score
 		staticG.setFont(new Font("Arial", Font.BOLD, 15));
 		staticG.setColor(Color.WHITE);
-		staticG.drawString("Score: " + score, 30*12-15, 35);
+		staticG.drawString("Score: " + score, 30*11, 50);
 	}
         
         
