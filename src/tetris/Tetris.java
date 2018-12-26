@@ -654,11 +654,3 @@ public class Tetris extends JPanel {
 //		}.start();
 	}
 }
-<<<<<<< HEAD
-
-
-
-
-// PAUSE Function i duzelt
-=======
->>>>>>> cffad457a5bf6b653725b816019310eed7811846
