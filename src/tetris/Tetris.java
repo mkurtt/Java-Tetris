@@ -363,16 +363,16 @@ public class Tetris extends JPanel {
 		}
             
         }
-        
-        private void clearGhostPiece(){
-            staticG.setColor(Color.BLACK);
-            for (Point p : Tetraminos[currentPiece][rotation]) {
-			staticG.fillRect((p.x + ghostOrigin.x) * 26, 
-					   (p.y + ghostOrigin.y) * 26, 
-					   25, 25);
-		}
-        }
-        
+//        
+//        private void clearGhostPiece(){
+//            staticG.setColor(Color.BLACK);
+//            for (Point p : Tetraminos[currentPiece][rotation]) {
+//			staticG.fillRect((p.x + ghostOrigin.x) * 26, 
+//					   (p.y + ghostOrigin.y) * 26, 
+//					   25, 25);
+//		}
+//        }
+//        
 	
 	@Override 
 	public void paintComponent(Graphics g){
