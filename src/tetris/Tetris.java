@@ -111,6 +111,7 @@ public class Tetris extends JPanel {
         static private JTextField hst = new JTextField();
         
 	private Point pieceOrigin;
+        private Point ghostOrigin;
 	private int currentPiece; // current piece index
 	private int rotation; // rotation index
 	private ArrayList<Integer> nextPieces = new ArrayList<Integer>();
@@ -221,6 +222,8 @@ public class Tetris extends JPanel {
         
 	// Rotate the piece clockwise or counterclockwise
 	public void rotate(int i) {
+            if(isCrazy) clearGhostPiece();
+            
 		int newRotation = (rotation + i) % 4;
 		if (newRotation < 0) {
 			newRotation = 3;
@@ -228,30 +231,43 @@ public class Tetris extends JPanel {
 		if (!collidesAt(pieceOrigin.x, pieceOrigin.y, newRotation)) {
 			rotation = newRotation;
 		}
+                
+                
+                
 		repaint();
 	}
 	
         
 	// Move the piece left or right
 	public void move(int i) {
+        //    if(isCrazy) clearGhostPiece();
+            
 		if (!collidesAt(pieceOrigin.x + i, pieceOrigin.y, rotation)) {
 			pieceOrigin.x += i;	
 		}
+                
+                
 		repaint();
 	}
 	
         
 	// Drops the piece one line or fixes it to the well if it can't drop
 	public void dropDown() {
+      //      if(isCrazy) clearGhostPiece();
+            
 		if (!collidesAt(pieceOrigin.x, pieceOrigin.y + 1, rotation)) {
 			pieceOrigin.y += 1;
 		} else {
 			fixToWell();
-		}	
+		}
+                
+                
 		repaint();
 	}
         
         public void SwapNextPiece(){
+        //    if(isCrazy) clearGhostPiece();
+            
             int swapTemp;
             swapTemp = currentPiece;
             currentPiece = nextPieces.get(0);
@@ -290,7 +306,7 @@ public class Tetris extends JPanel {
 		for (int j = 21; j > 0; j--) {
 			gap = false;
 			for (int i = 1; i < 11; i++) {
-				if (well[i][j] == Color.BLACK) {
+				if (well[i][j] == Color.BLACK || well[i][j] == Color.LIGHT_GRAY) {
 					gap = true;
 					break;
 				}
@@ -334,6 +350,29 @@ public class Tetris extends JPanel {
 		}
 	}
         
+        private void drawGhostPiece(){
+            ghostOrigin = pieceOrigin;
+            while(!collidesAt(ghostOrigin.x, ghostOrigin.y+1, rotation)){
+                ghostOrigin.y++;
+            }
+            staticG.setColor(Color.LIGHT_GRAY);
+            for (Point p : Tetraminos[currentPiece][rotation]) {
+			staticG.fillRect((p.x + ghostOrigin.x) * 26, 
+					   (p.y + ghostOrigin.y) * 26, 
+					   25, 25);
+		}
+            
+        }
+        
+        private void clearGhostPiece(){
+            staticG.setColor(Color.BLACK);
+            for (Point p : Tetraminos[currentPiece][rotation]) {
+			staticG.fillRect((p.x + ghostOrigin.x) * 26, 
+					   (p.y + ghostOrigin.y) * 26, 
+					   25, 25);
+		}
+        }
+        
 	
 	@Override 
 	public void paintComponent(Graphics g){
@@ -367,6 +406,7 @@ public class Tetris extends JPanel {
 
             // Display next piece
             drawNextPiece();
+            
 
             if(GameOver){
                 GameOver();
@@ -374,6 +414,7 @@ public class Tetris extends JPanel {
             else{
                 // Draw the currently falling piece
                 drawPiece();
+                if(isCrazy) drawGhostPiece();
             }
 	}
         
