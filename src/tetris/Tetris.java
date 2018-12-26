@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,14 +21,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import static java.lang.Thread.yield;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
-
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -89,7 +91,15 @@ public class Tetris extends JPanel {
 				{ new Point(1, 0), new Point(0, 1), new Point(1, 1), new Point(0, 2) },
 				{ new Point(0, 0), new Point(1, 0), new Point(1, 1), new Point(2, 1) },
 				{ new Point(1, 0), new Point(0, 1), new Point(1, 1), new Point(0, 2) }
+			},
+                        // o-Piece-Bomb
+			{
+				{ new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0) },
+				{ new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0) },
+				{ new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0) },
+				{ new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0) }
 			}
+
 	};
 	
         
@@ -107,9 +117,18 @@ public class Tetris extends JPanel {
 	private int rotation; // rotation index
 	private ArrayList<Integer> nextPieces = new ArrayList<Integer>();
 	
+        
+        static private boolean gonnaPause = false;
 	static private boolean GameOver = false;
         static private int gameSpeed = 1000;
         static private int linesCleared = 0;
+        static private boolean isCrazy = false;
+        static public boolean Continue = false; // helps us coose Classic or Crazy mod
+        
+        
+        static final Tetris game = new Tetris();
+        static private GameThread Thread2 = new GameThread();
+        
 	
         static class Score implements Comparable<Score>{
             public String PlayerName;
@@ -163,7 +182,7 @@ public class Tetris extends JPanel {
 		Random rnd = new Random();
 		
 		if (nextPieces.isEmpty()) {  	// 
-			Collections.addAll(nextPieces, rnd.nextInt(7), rnd.nextInt(7), rnd.nextInt(7));
+			Collections.addAll(nextPieces, 0, 1, 2, 3, 4, 5, 6);
 			Collections.shuffle(nextPieces);
 		}
 		
@@ -311,6 +330,7 @@ public class Tetris extends JPanel {
             scores(g); 
             level(g);
             linesCleared(g);
+            // putPauseText(g);
 
             // Display next piece
             drawNextPiece(g);
@@ -375,17 +395,19 @@ public class Tetris extends JPanel {
 		g.drawString("GAME OVER!",26*5, 26*11);
                 
                 if(highScoreList.size() < 5){
+                    hst.setBounds(26*7-13, 26*11, 26*4, 25);
+                    bt.setBounds(26*8-13, 26*12, 26*3, 25);
                     f.add(hst,BorderLayout.CENTER);
                     f.add(bt);
                 }
                 else {
                     if(highScoreList.get(4).point < score){
+                    hst.setBounds(26*7-13, 26*11, 26*4, 25);
+                    bt.setBounds(26*8-13, 26*12, 26*3, 25);
                         f.add(hst,BorderLayout.CENTER);
                         f.add(bt);
                     }
-                }
-                    
-                
+                } 
 	}
         
 	
@@ -406,7 +428,7 @@ public class Tetris extends JPanel {
                 }
                 
                 
-		
+                
 		
 		// Current Score
 		g.setFont(new Font("Arial", Font.BOLD, 15));
@@ -433,21 +455,115 @@ public class Tetris extends JPanel {
                 bfr.close();
         }
         
-//        static private void pause() {
-//            isPaused = !isPaused;
-//        }
-// 
+        static private void pause() throws InterruptedException {
+            if(Thread2.running) Thread2.pauseThread();
+            else Thread2.resumeThread();
+        }
+        
+        public static void ActivateCrazyMod(){
+            isCrazy = true;
+        }
+        
+        static private void putPauseText(Graphics g) throws InterruptedException{
+                
+                if(gonnaPause){
+                    Thread2.running = false;
+                    g.setFont(new Font("Arial", Font.BOLD, 30));
+                    g.setColor(Color.WHITE);
+                    g.drawString("PAUSED",26*5, 26*11);
+                }
+                else{
+                    g.setFont(new Font("Arial", Font.BOLD, 30));
+                    g.setColor(Color.WHITE);
+                    g.drawString("        ",26*5, 26*11);
+                }           
+        }
+        
+        
+        
+        static class GameThread extends Thread{
+            private volatile boolean running = true;
+            
+            @Override
+            public void run(){
+                while(true){
+                    // Only keep painting while "running" is true
+                    // This is a crude implementation of pausing the thread
+                    while (!running)
+                        Thread.yield();
 
-	public static void main(String[] args) throws IOException{
+                    try {
+                        Thread.sleep(gameSpeed);
+			if(GameOver){
+							
+			}else
+                            game.dropDown();
+
+			} 
+                    catch ( InterruptedException e ) {}
+                    
+                    
+                }
+            }
+
+            public void pauseThread() throws InterruptedException{
+                gonnaPause = true;
+                
+            }
+
+            public void resumeThread(){
+                gonnaPause = false;
+                running = true;
+            }
+        }
+        
+        
+        
+        
+	public static void main(String[] args) throws IOException, InterruptedException{
 		
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setSize(18*26+10, 26*23+25);
 		f.setVisible(true);
+//                
+//                JPanel panel = new JPanel(new GridLayout(1,2));
+//                JButton btClassic = new JButton("Classic");
+//                JButton btCrazy = new JButton("Crazy");
                 
-                hst.setBounds(26*7-13, 26*11, 26*4, 25);
-                bt.setBounds(26*8-13, 26*12, 26*3, 25);
                 
-		final Tetris game = new Tetris();
+                
+                
+//                
+//                
+//                
+//                btClassic.addActionListener(new ActionListener(){
+//                    @Override
+//                    public void actionPerformed(ActionEvent e) {
+//                        if(e.getSource() == btClassic){
+//                            btClassic.setVisible(false);
+//                            btCrazy.setVisible(false);
+//                            Continue = true;
+//                        }
+//                    }
+//                });
+//                
+//                btCrazy.addActionListener(new ActionListener(){
+//                    @Override
+//                    public void actionPerformed(ActionEvent e) {
+//                        if(e.getSource() == btClassic){
+//                            ActivateCrazyMod();
+//                            btClassic.setVisible(false);
+//                            btCrazy.setVisible(false);
+//                            Continue = true;
+//                        }
+//                    }
+//                });
+//		
+                
+                
+                
+                
+                
 		game.init();
 		f.add(game);
                 
@@ -501,9 +617,15 @@ public class Tetris extends JPanel {
 				case KeyEvent.VK_SPACE:
 					game.dropDown();
 					break;
-//                                case KeyEvent.VK_P:
-//                                        pause();
-//                                        break;
+                                case KeyEvent.VK_P:
+                                {
+                                    try {
+                                        pause();
+                                    } catch (InterruptedException ex) {
+                                        Logger.getLogger(Tetris.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }
+                                        break;
 				} 
 			}
 			
@@ -511,22 +633,28 @@ public class Tetris extends JPanel {
 			}
 		});
                 
+                
+                Thread2.pauseThread();
+                Thread2.start();
 		
 		// Make the falling piece drop every second
-		new Thread() {
-			@Override public void run() {
-				while (true) {
-					try {
-//                                            if(!isSPaused){
-						Thread.sleep(gameSpeed);
-						if(GameOver){
-							
-						}else
-                                                    game.dropDown();
-//                                            }
-					} catch ( InterruptedException e ) {}
-				}
-			}
-		}.start();
+//		new Thread() {
+//			@Override public void run() {
+//				while (true) {
+//					try {
+//						Thread.sleep(gameSpeed);
+//						if(GameOver){
+//							
+//						}else
+//                                                    game.dropDown();
+//					} catch ( InterruptedException e ) {}
+//				}
+//			}
+//		}.start();
 	}
 }
+
+
+
+
+// PAUSE Function i duzelt
