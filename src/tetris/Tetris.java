@@ -523,7 +523,21 @@ public class Tetris extends JPanel {
             }
         }
         
-        
+        public static void startGame() throws IOException{
+            
+            
+                        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                        f.setSize(18*26+10, 26*23+25);
+                        f.setVisible(true);
+                        
+                        game.init();
+                        f.add(game);
+                        
+                        
+                Thread2.start();
+                
+            
+        }
         
 	public static void main(String[] args) throws IOException, InterruptedException{
 		
@@ -546,12 +560,20 @@ public class Tetris extends JPanel {
                     public void actionPerformed(ActionEvent e) {
                         if(e.getSource() == btClassic){
                             fmod.dispose();
-                            Continue = true;
+                            try {
+                                startGame();
+                            } catch (IOException ex) {
+                                Logger.getLogger(Tetris.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
                         else if(e.getSource() == btCrazy){
                             ActivateCrazyMod();
                             fmod.dispose();
-                            Continue = true;
+                            try {
+                                startGame();
+                            } catch (IOException ex) {
+                                Logger.getLogger(Tetris.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
                     }
                     
@@ -562,18 +584,6 @@ public class Tetris extends JPanel {
                 btClassic.addActionListener(Mod);
                 btCrazy.addActionListener(Mod);
                 
-                
-                while(true){
-                    if(Continue){
-                        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                        f.setSize(18*26+10, 26*23+25);
-                        f.setVisible(true);
-                        
-                        game.init();
-                        f.add(game);
-                        break;
-                    }
-                }
                 
                 
                 bt.addActionListener(new ActionListener() {
@@ -654,8 +664,6 @@ public class Tetris extends JPanel {
 		});
                 
                 
-                
-                Thread2.start();
                 
 		
 		// Make the falling piece drop every second
