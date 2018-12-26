@@ -92,10 +92,10 @@ public class Tetris extends JPanel {
 			},
                         // o-Piece-Bomb
 			{
-				{ new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0) },
-				{ new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0) },
-				{ new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0) },
-				{ new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0) }
+				{ new Point(1, 1), new Point(1, 1), new Point(1, 1), new Point(1, 1) },
+				{ new Point(1, 1), new Point(1, 1), new Point(1, 1), new Point(1, 1) },
+				{ new Point(1, 1), new Point(1, 1), new Point(1, 1), new Point(1, 1) },
+				{ new Point(1, 1), new Point(1, 1), new Point(1, 1), new Point(1, 1) }
 			}
 
 	};
@@ -103,7 +103,7 @@ public class Tetris extends JPanel {
         
 	// tetramino colors
 	private final Color[] tetraminoColors = {
-		Color.cyan, Color.blue, Color.orange, Color.yellow, Color.green, Color.pink, Color.red
+		Color.cyan, Color.blue, Color.orange, Color.yellow, Color.green, Color.pink, Color.red, Color.white
 	};
 	
         static private JFrame f = new JFrame("Tetris");
@@ -143,9 +143,6 @@ public class Tetris extends JPanel {
         
         
         
-//        static private boolean isPaused = false;
-        
-        
 
 	static public int score;
 	private Color[][] well;
@@ -170,21 +167,23 @@ public class Tetris extends JPanel {
         
 	// Put a new, random piece into the dropping position
 	public void newPiece() {
+            
+            if(currentPiece == 7) bombExplosion();
+            
 		pieceOrigin = new Point(5, 2); // center top coordinates
 		rotation = 0;
 		if(collidesAt(5,2,0)){
 			GameOver = true;
 			return;
 		}
-			
+                	
 		Random rnd = new Random();
 		
-		if (nextPieces.isEmpty()) {  	// 
+		if (nextPieces.isEmpty()) {
 			Collections.addAll(nextPieces, 0, 1, 2, 3, 4, 5, 6);
                         if (isCrazy) nextPieces.add(7);
 			Collections.shuffle(nextPieces);
 		}
-		
 		currentPiece = nextPieces.get(0);
 		nextPieces.remove(0);
                 if (isCrazy) nextPieces.add(rnd.nextInt(8));
@@ -192,11 +191,28 @@ public class Tetris extends JPanel {
 	}
 	
         
+        private void bombExplosion(){
+            well[pieceOrigin.x+1][pieceOrigin.y+2] = Color.BLACK;
+            well[pieceOrigin.x][pieceOrigin.y+2] = Color.BLACK;
+            well[pieceOrigin.x+1][pieceOrigin.y+3] = Color.BLACK;
+            well[pieceOrigin.x+2][pieceOrigin.y+2] = Color.BLACK;
+            well[pieceOrigin.x+1][pieceOrigin.y+1] = Color.BLACK;
+            for (int i = 0; i < 11; i++) { // columns
+			for (int j = 0; j < 23; j++) { //rows 
+				if (i == 0 || i == 11 || j == 22) {  // left || right || bottom 
+					well[i][j] = Color.GRAY;	// gray
+				}
+			}
+		}
+        }
+        
+        
 	// Collision test for the dropping piece
 	private boolean collidesAt(int x, int y, int rotation) {
 		for (Point p : Tetraminos[currentPiece][rotation]) {
 			if (well[p.x + x][p.y + y] != Color.BLACK) {
-				return true;
+                            
+                            return true;
 			}
 		}
 		return false;
@@ -234,6 +250,15 @@ public class Tetris extends JPanel {
 		}	
 		repaint();
 	}
+        
+        public void SwapNextPiece(){
+            int swapTemp;
+            swapTemp = currentPiece;
+            currentPiece = nextPieces.get(0);
+            nextPieces.set(0, swapTemp);
+            
+            repaint();
+        }
 	
         
 	// Make the dropping piece part of the well, so it is available for
@@ -334,6 +359,7 @@ public class Tetris extends JPanel {
                 Logger.getLogger(Tetris.class.getName()).log(Level.SEVERE, null, ex);
             }
             // Display UI
+            GameModeStatus();
             scores(); 
             level();
             linesCleared();
@@ -351,6 +377,13 @@ public class Tetris extends JPanel {
             }
 	}
         
+        private void GameModeStatus(){
+            staticG.setFont(new Font("Arial", Font.BOLD, 20));
+            staticG.setColor(Color.WHITE);
+            if(isCrazy) staticG.drawString("Crazy",30*12-15, 17);
+            else staticG.drawString("Classic",30*12-15, 17);
+        }
+            
         
         private void linesCleared(){
             staticG.setFont(new Font("Arial", Font.BOLD, 15));
@@ -440,7 +473,7 @@ public class Tetris extends JPanel {
 		// Current Score
 		staticG.setFont(new Font("Arial", Font.BOLD, 15));
 		staticG.setColor(Color.WHITE);
-		staticG.drawString("Score: " + score, 30*12, 25);
+		staticG.drawString("Score: " + score, 30*12-15, 35);
 	}
         
         
@@ -646,6 +679,14 @@ public class Tetris extends JPanel {
                                     if(Thread2.running){
 					game.dropDown();
                                     }
+                                    break;
+				case KeyEvent.VK_S:
+                                    if(Thread2.running){
+                                        if(isCrazy){
+                                            game.SwapNextPiece();
+                                    
+                                        }
+                                    }
 					break;
                                 case KeyEvent.VK_P:
                                 {
@@ -662,23 +703,5 @@ public class Tetris extends JPanel {
 			public void keyReleased(KeyEvent e) {
 			}
 		});
-                
-                
-                
-		
-		// Make the falling piece drop every second
-//		new Thread() {
-//			@Override public void run() {
-//				while (true) {
-//					try {
-//						Thread.sleep(gameSpeed);
-//						if(GameOver){
-//							
-//						}else
-//                                                    game.dropDown();
-//					} catch ( InterruptedException e ) {}
-//				}
-//			}
-//		}.start();
 	}
 }
