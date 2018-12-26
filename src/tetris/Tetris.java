@@ -605,6 +605,7 @@ public class Tetris extends JPanel {
 				case KeyEvent.VK_UP:
 					game.rotate(-1);
 					break;
+                                        
 				case KeyEvent.VK_DOWN:
 					game.rotate(+1);
 					break;
