@@ -107,6 +107,7 @@ public class Tetris extends JPanel {
 	};
 	
         static private JFrame f = new JFrame("Tetris");
+        static private JFrame saveFrame = new JFrame("Save");
         static private JButton bt = new JButton("Save");  
         static private JTextField hst = new JTextField();
         
@@ -415,9 +416,10 @@ public class Tetris extends JPanel {
                 GameOver();
             }
             else{
+                if(isCrazy) drawGhostPiece();
                 // Draw the currently falling piece
                 drawPiece();
-                if(isCrazy) drawGhostPiece();
+                
             }
 	}
         
@@ -472,24 +474,33 @@ public class Tetris extends JPanel {
             }
 	}
         
+        
+        public static void saveHighScore(){
+                    JPanel panel = new JPanel(new GridLayout(1,2));
+            
+                    hst.setBounds(26*7-13, 26*11, 26*4, 25);
+                    bt.setBounds(26*8-13, 26*12, 26*3, 25);
+                    panel.add(hst);
+                    panel.add(bt);
+                    saveFrame.add(panel,BorderLayout.CENTER);
+                    
+                    
+                    saveFrame.setVisible(true);
+        }
+        
 	
 	private void GameOver(){
 		staticG.setFont(new Font("Arial", Font.BOLD, 30));
 		staticG.setColor(Color.WHITE);
 		staticG.drawString("GAME OVER!",26*5, 26*11);
                 
+                
                 if(highScoreList.size() < 5){
-                    hst.setBounds(26*7-13, 26*11, 26*4, 25);
-                    bt.setBounds(26*8-13, 26*12, 26*3, 25);
-                    f.add(hst,BorderLayout.CENTER);
-                    f.add(bt);
+                    saveHighScore();
                 }
                 else {
                     if(highScoreList.get(4).point < score){
-                    hst.setBounds(26*7-13, 26*11, 26*4, 25);
-                    bt.setBounds(26*8-13, 26*12, 26*3, 25);
-                        f.add(hst,BorderLayout.CENTER);
-                        f.add(bt);
+                        saveHighScore();
                     }
                 } 
 	}
@@ -600,6 +611,7 @@ public class Tetris extends JPanel {
             }
         }
         
+        
         public static void startGame() throws IOException{
             
             
@@ -609,6 +621,7 @@ public class Tetris extends JPanel {
                         
                         game.init();
                         f.add(game);
+            
                         
                         
                 Thread2.start();
