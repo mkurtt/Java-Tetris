@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package asd;
+package tetris;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -34,91 +34,91 @@ import javax.swing.JTextField;
 public class tetris extends JPanel {
 	
 	//        [pieces] [rotations] [coordinates]
-	private final Point[][][] Tetraminos = {
-			// I-Piece
-			{
-				{ new Point(0, 1), new Point(1, 1), new Point(2, 1), new Point(3, 1) },
-				{ new Point(1, 0), new Point(1, 1), new Point(1, 2), new Point(1, 3) },
-				{ new Point(0, 1), new Point(1, 1), new Point(2, 1), new Point(3, 1) },
-				{ new Point(1, 0), new Point(1, 1), new Point(1, 2), new Point(1, 3) }
-			},
-			
-			// J-Piece
-			{
-				{ new Point(0, 1), new Point(1, 1), new Point(2, 1), new Point(2, 0) },
-				{ new Point(1, 0), new Point(1, 1), new Point(1, 2), new Point(2, 2) },
-				{ new Point(0, 1), new Point(1, 1), new Point(2, 1), new Point(0, 2) },
-				{ new Point(1, 0), new Point(1, 1), new Point(1, 2), new Point(0, 0) }
-			},
-			
-			// L-Piece
-			{
-				{ new Point(0, 1), new Point(1, 1), new Point(2, 1), new Point(2, 2) },
-				{ new Point(1, 0), new Point(1, 1), new Point(1, 2), new Point(0, 2) },
-				{ new Point(0, 1), new Point(1, 1), new Point(2, 1), new Point(0, 0) },
-				{ new Point(1, 0), new Point(1, 1), new Point(1, 2), new Point(2, 0) }
-			},
-			
-			// O-Piece
-			{
-				{ new Point(0, 0), new Point(0, 1), new Point(1, 0), new Point(1, 1) },
-				{ new Point(0, 0), new Point(0, 1), new Point(1, 0), new Point(1, 1) },
-				{ new Point(0, 0), new Point(0, 1), new Point(1, 0), new Point(1, 1) },
-				{ new Point(0, 0), new Point(0, 1), new Point(1, 0), new Point(1, 1) }
-			},
-			
-			// S-Piece
-			{
-				{ new Point(1, 0), new Point(2, 0), new Point(0, 1), new Point(1, 1) },
-				{ new Point(0, 0), new Point(0, 1), new Point(1, 1), new Point(1, 2) },
-				{ new Point(1, 0), new Point(2, 0), new Point(0, 1), new Point(1, 1) },
-				{ new Point(0, 0), new Point(0, 1), new Point(1, 1), new Point(1, 2) }
-			},
-			
-			// T-Piece
-			{
-				{ new Point(1, 0), new Point(0, 1), new Point(1, 1), new Point(2, 1) },
-				{ new Point(1, 0), new Point(0, 1), new Point(1, 1), new Point(1, 2) },
-				{ new Point(0, 1), new Point(1, 1), new Point(2, 1), new Point(1, 2) },
-				{ new Point(1, 0), new Point(1, 1), new Point(2, 1), new Point(1, 2) }
-			},
-			
-			// Z-Piece
-			{
-				{ new Point(0, 0), new Point(1, 0), new Point(1, 1), new Point(2, 1) },
-				{ new Point(1, 0), new Point(0, 1), new Point(1, 1), new Point(0, 2) },
-				{ new Point(0, 0), new Point(1, 0), new Point(1, 1), new Point(2, 1) },
-				{ new Point(1, 0), new Point(0, 1), new Point(1, 1), new Point(0, 2) }
-			},
-                        // o-Piece-Bomb
-			{
-				{ new Point(1, 1), new Point(1, 1), new Point(1, 1), new Point(1, 1) },
-				{ new Point(1, 1), new Point(1, 1), new Point(1, 1), new Point(1, 1) },
-				{ new Point(1, 1), new Point(1, 1), new Point(1, 1), new Point(1, 1) },
-				{ new Point(1, 1), new Point(1, 1), new Point(1, 1), new Point(1, 1) }
-			}
+    private final Point[][][] Tetraminos = {
+                    // I-Piece
+                    {
+                            { new Point(0, 1), new Point(1, 1), new Point(2, 1), new Point(3, 1) },
+                            { new Point(1, 0), new Point(1, 1), new Point(1, 2), new Point(1, 3) },
+                            { new Point(0, 1), new Point(1, 1), new Point(2, 1), new Point(3, 1) },
+                            { new Point(1, 0), new Point(1, 1), new Point(1, 2), new Point(1, 3) }
+                    },
 
-	};
-	
-        
-	// tetramino colors
-	private final Color[] tetraminoColors = {
-		Color.cyan, Color.blue, Color.orange, Color.yellow, Color.green, Color.pink, Color.red, Color.white
-	};
+                    // J-Piece
+                    {
+                            { new Point(0, 1), new Point(1, 1), new Point(2, 1), new Point(2, 0) },
+                            { new Point(1, 0), new Point(1, 1), new Point(1, 2), new Point(2, 2) },
+                            { new Point(0, 1), new Point(1, 1), new Point(2, 1), new Point(0, 2) },
+                            { new Point(1, 0), new Point(1, 1), new Point(1, 2), new Point(0, 0) }
+                    },
+
+                    // L-Piece
+                    {
+                            { new Point(0, 1), new Point(1, 1), new Point(2, 1), new Point(2, 2) },
+                            { new Point(1, 0), new Point(1, 1), new Point(1, 2), new Point(0, 2) },
+                            { new Point(0, 1), new Point(1, 1), new Point(2, 1), new Point(0, 0) },
+                            { new Point(1, 0), new Point(1, 1), new Point(1, 2), new Point(2, 0) }
+                    },
+
+                    // O-Piece
+                    {
+                            { new Point(0, 0), new Point(0, 1), new Point(1, 0), new Point(1, 1) },
+                            { new Point(0, 0), new Point(0, 1), new Point(1, 0), new Point(1, 1) },
+                            { new Point(0, 0), new Point(0, 1), new Point(1, 0), new Point(1, 1) },
+                            { new Point(0, 0), new Point(0, 1), new Point(1, 0), new Point(1, 1) }
+                    },
+
+                    // S-Piece
+                    {
+                            { new Point(1, 0), new Point(2, 0), new Point(0, 1), new Point(1, 1) },
+                            { new Point(0, 0), new Point(0, 1), new Point(1, 1), new Point(1, 2) },
+                            { new Point(1, 0), new Point(2, 0), new Point(0, 1), new Point(1, 1) },
+                            { new Point(0, 0), new Point(0, 1), new Point(1, 1), new Point(1, 2) }
+                    },
+
+                    // T-Piece
+                    {
+                            { new Point(1, 0), new Point(0, 1), new Point(1, 1), new Point(2, 1) },
+                            { new Point(1, 0), new Point(0, 1), new Point(1, 1), new Point(1, 2) },
+                            { new Point(0, 1), new Point(1, 1), new Point(2, 1), new Point(1, 2) },
+                            { new Point(1, 0), new Point(1, 1), new Point(2, 1), new Point(1, 2) }
+                    },
+
+                    // Z-Piece
+                    {
+                            { new Point(0, 0), new Point(1, 0), new Point(1, 1), new Point(2, 1) },
+                            { new Point(1, 0), new Point(0, 1), new Point(1, 1), new Point(0, 2) },
+                            { new Point(0, 0), new Point(1, 0), new Point(1, 1), new Point(2, 1) },
+                            { new Point(1, 0), new Point(0, 1), new Point(1, 1), new Point(0, 2) }
+                    },
+                    // o-Piece-Bomb
+                    {
+                            { new Point(1, 1), new Point(1, 1), new Point(1, 1), new Point(1, 1) },
+                            { new Point(1, 1), new Point(1, 1), new Point(1, 1), new Point(1, 1) },
+                            { new Point(1, 1), new Point(1, 1), new Point(1, 1), new Point(1, 1) },
+                            { new Point(1, 1), new Point(1, 1), new Point(1, 1), new Point(1, 1) }
+                    }
+
+    };
+
+
+    // tetramino colors
+    private final Color[] tetraminoColors = {
+            Color.cyan, Color.blue, Color.orange, Color.yellow, Color.green, Color.pink, Color.red, Color.white
+    };
 
     static private JFrame f = new JFrame("Tetris");
     static private JFrame saveFrame = new JFrame("Save");
     static private JButton bt = new JButton("Save");  
     static private JTextField hst = new JTextField();
     
-	static private Point pieceOrigin;
+    static private Point pieceOrigin;
     static private Point ghostOrigin;
-	private int[] currentPiece = new int[2]; // current piece index
-	private int rotation; // rotation index
-	private ArrayList<Integer> nextPieces = new ArrayList<Integer>();
-	private int nextPieceID = 0;
-        
-	static private boolean GameOver = false;
+    private int[] currentPiece = new int[2]; // current piece index
+    private int rotation; // rotation index
+    private ArrayList<Integer> nextPieces = new ArrayList<Integer>();
+    private int nextPieceID = 0;
+
+    static private boolean GameOver = false;
     static private int gameSpeed = 1000;
     static private int linesCleared = 0;
     static private boolean isCrazy = false;
@@ -142,452 +142,462 @@ public class tetris extends JPanel {
     
     static private ArrayList<Score> highScoreList = new ArrayList<Score>();
     
-	static public int score;
-	private Color[][] well;
-	private int[][] wellID;
-	
-        
-	// Creates a border around the well and initializes the dropping piece
-	private void init() throws IOException {
-		wellID = new int [12][24];
-		well = new Color[19][24]; //play area size 
-		for (int i = 0; i < 11; i++) { // columns
-			for (int j = 0; j < 23; j++) { //rows 
-				if (i == 0 || i == 11 || j == 22) {  // left || right || bottom 
-					well[i][j] = Color.GRAY;	// gray
-					wellID[i][j] = 0;
-				} else {			// rest is black
-					well[i][j] = Color.BLACK;
-					wellID[i][j] = 0;
-				}
-			}
-		}
-                ReadHighScoreFile();
-		newPiece();
-	}
-	
-	
-	public int GenerateUniqueID(Random rnd){
-    	boolean A = false;
-    	int ID;
-    	while(true){
-    		ID = rnd.nextInt(10000) + 10000;
-    		for (int i = 0; i < 11; i++) { // columns
-    			for (int j = 0; j < 23; j++) { //rows 
-    				if(wellID[i][j] == ID){
-    					A = true;
-    					break;
-    				}
-    			}
-    			if(A) break;
-    		}
-    		if(!A) break;
-    	}
-    	return ID;
+    static public int score;
+    private Color[][] well;
+    private int[][] wellID;
+
+
+    // Creates a border around the well and initializes the dropping piece
+    private void init() throws IOException {
+            wellID = new int [12][24];
+            well = new Color[19][24]; //play area size 
+            for (int i = 0; i < 12; i++) { // columns
+                    for (int j = 0; j < 23; j++) { //rows 
+                            if (i == 0 || i == 11 || j == 22) {  // left || right || bottom 
+                                    well[i][j] = Color.GRAY;	// gray
+                                    wellID[i][j] = 0;
+                            } else {			// rest is black
+                                    well[i][j] = Color.BLACK;
+                                    wellID[i][j] = 0;
+                            }
+                    }
+            }
+            ReadHighScoreFile();
+            newPiece();
     }
-	
+
+
+    public int GenerateUniqueID(Random rnd){
+    boolean A = false;
+    int ID;
+    while(true){
+            ID = rnd.nextInt(10000) + 10000;
+            for (int i = 0; i < 11; i++) { // columns
+                    for (int j = 0; j < 23; j++) { //rows 
+                            if(wellID[i][j] == ID){
+                                    A = true;
+                                    break;
+                            }
+                    }
+                    if(A) break;
+            }
+            if(!A) break;
+    }
+    return ID;
+}
+
+
+    // Put a new, random piece into the dropping position
+    public void newPiece() {
         
-	// Put a new, random piece into the dropping position
-	public void newPiece() {
+            pieceOrigin = new Point(5, 2); // center top coordinates
+            rotation = 0;
+            if(collidesAt(5,2,0)){
+                    GameOver = true;
+                    return;
+            }
+
+            Random rnd = new Random();
+
+            if (nextPieces.isEmpty()) {
+                    Collections.addAll(nextPieces, 0, 1, 2, 3, 4, 5, 6);
+                    if (isCrazy) nextPieces.add(7);
+                    Collections.shuffle(nextPieces);
+                    nextPieceID = GenerateUniqueID(rnd);
+            }
+            currentPiece[1] = nextPieceID;
+            currentPiece[0] = nextPieces.get(0);
+            nextPieces.remove(0);
+
+            nextPieceID = GenerateUniqueID(rnd);
+    if (isCrazy) nextPieces.add(rnd.nextInt(8));
+    else nextPieces.add(rnd.nextInt(7));
+    }
+
+
+    // fix to Well with ID
+    private void fixToWell(int ID){
+        // Bomb location erase
+            well[pieceOrigin.x+1][pieceOrigin.y+1] = Color.BLACK;
+            wellID[pieceOrigin.x+1][pieceOrigin.y+1] = 0;
             
             
-            
-		pieceOrigin = new Point(5, 2); // center top coordinates
-		rotation = 0;
-		if(collidesAt(5,2,0)){
-			GameOver = true;
-			return;
-		}
-                	
-		Random rnd = new Random();
-		
-		if (nextPieces.isEmpty()) {
-			Collections.addAll(nextPieces, 0, 1, 2, 3, 4, 5, 6);
-                        if (isCrazy) nextPieces.add(7);
-			Collections.shuffle(nextPieces);
-			nextPieceID = GenerateUniqueID(rnd);
-		}
-		currentPiece[1] = nextPieceID;
-		currentPiece[0] = nextPieces.get(0);
-		nextPieces.remove(0);
-		
-		nextPieceID = GenerateUniqueID(rnd);
-        if (isCrazy) nextPieces.add(rnd.nextInt(8));
-        else nextPieces.add(rnd.nextInt(7));
-	}
-	
-	
-	//fix to Well with ID
-	private void fixToWell(int ID){
-		
-	}
-	
-	
-	private void destroyingTetraminos(int x, int y){
-		if(wellID[x][y] == 0 || wellID[x][y] == currentPiece[1] ){
-			fixToWell(wellID[x][y]);
-		}
-	}
-	
-    // REMOVES TETRAMINOS AROUND
-	private void bombPieceDestroyer(){
-		
-		//for each piece of the tetramino
-		for (Point p : Tetraminos[currentPiece[0]][rotation]) {
-			
-			// for all sides of each tetramino
-			destroyingTetraminos(p.x + pieceOrigin.x + 1, p.y + pieceOrigin.y);
-			destroyingTetraminos(p.x + pieceOrigin.x - 1, p.y + pieceOrigin.y);
-			destroyingTetraminos(p.x + pieceOrigin.x, p.y + pieceOrigin.y + 1);
-			destroyingTetraminos(p.x + pieceOrigin.x, p.y + pieceOrigin.y - 1);
-		}
-	}
-	
-        
+            for (int i = 1; i < 11; i++) {
+                    for (int j = 0; j < 23; j++) {
+                            if(wellID[i][j] == ID) {
+                                well[i][j] = Color.BLACK;
+                                wellID[i][j] = 0;
+                            }
+                    }
+            }
+    }
+
+
+    private void destroyingTetraminos(int x, int y){
+            if (wellID[x][y] != 0) {
+                fixToWell(wellID[x][y]);
+            }
+    }
+
+    // REMOVES TETRAMINOS AROUND THE BOMB TETRAMINO
+    private void bombPieceDestroyer(){
+            //for each piece of the tetramino
+            Point P = Tetraminos[currentPiece[0]][rotation][0];
+
+            // for all sides of each tetramino
+            destroyingTetraminos(P.x + pieceOrigin.x, P.y + pieceOrigin.y + 1);
+            destroyingTetraminos(P.x + pieceOrigin.x - 1, P.y + pieceOrigin.y);
+            destroyingTetraminos(P.x + pieceOrigin.x, P.y + pieceOrigin.y - 1);
+            destroyingTetraminos(P.x + pieceOrigin.x + 1, P.y + pieceOrigin.y);		
+    }
+
+
+    // THIS MUST BE CHANGED IN THE FixToWell FUNCTION
+    // DESTROYS TILES AROUND THE BOMB TETRAMINO
     private void bombExplosion(){
         well[pieceOrigin.x+1][pieceOrigin.y+2] = Color.BLACK;
         well[pieceOrigin.x][pieceOrigin.y+2] = Color.BLACK;
         well[pieceOrigin.x+1][pieceOrigin.y+3] = Color.BLACK;
         well[pieceOrigin.x+2][pieceOrigin.y+2] = Color.BLACK;
         well[pieceOrigin.x+1][pieceOrigin.y+1] = Color.BLACK;
-        
-        
-        for (int i = 0; i < 12; i++) { // columns
-			for (int j = 0; j < 23; j++) { //rows 
-				if (i == 0 || i == 11 || j == 22) {  // left || right || bottom 
-					well[i][j] = Color.GRAY;	// gray
-				}
-			}
-		}
-    }
-        
-        
-	// Collision test for the dropping piece
-	private boolean collidesAt(int x, int y, int rotation) {
-		for (Point p : Tetraminos[currentPiece[0]][rotation]) {
-			if (well[p.x + x][p.y + y] != Color.BLACK) {
-                            
-                            return true;
-			}
-		}
-		return false;
-	}
-	
-        
-	// Rotate the piece clockwise or counterclockwise
-	public void rotate(int i) {
-           // if(isCrazy) clearGhostPiece();
-            
-		int newRotation = (rotation + i) % 4;
-		if (newRotation < 0) {
-			newRotation = 3;
-		}
-		if (!collidesAt(pieceOrigin.x, pieceOrigin.y, newRotation)) {
-			rotation = newRotation;
-		}
-                
-                
-                
-		repaint();
-	}
-	
-        
-	// Move the piece left or right
-	public void move(int i) {
-        //    if(isCrazy) clearGhostPiece();
-            
-		if (!collidesAt(pieceOrigin.x + i, pieceOrigin.y, rotation)) {
-			pieceOrigin.x += i;	
-		}
-                
-                
-		repaint();
-	}
-	
-        
-	// Drops the piece one line or fixes it to the well if it can't drop
-	public void dropDown() {
-      //      if(isCrazy) clearGhostPiece();
-            
-		if (!collidesAt(pieceOrigin.x, pieceOrigin.y + 1, rotation)) {
-			pieceOrigin.y += 1;
-		} else {
-			fixToWell();
-		}
-                
-                
-		repaint();
-	}
-        
-        public void SwapNextPiece(){
-        //    if(isCrazy) clearGhostPiece();
-            
-            int swapTemp;
-            swapTemp = currentPiece[0];
-            currentPiece[0] = (int) nextPieces.get(0);
-            nextPieces.set(0, swapTemp);
-            
-            repaint();
-        }
-	
-        
-	// Make the dropping piece part of the well, so it is available for
-	// collision detection.
-	public void fixToWell() {
-		for (Point p : Tetraminos[currentPiece[0]][rotation]) {
-			well[pieceOrigin.x + p.x][pieceOrigin.y + p.y] = tetraminoColors[currentPiece[0]];
-		}
-		if(currentPiece[0] == 7) bombExplosion();
-		clearRows();
-		newPiece();
-	}
-	
-        
-	public void deleteRow(int row) {
-		for (int j = row-1; j > 0; j--) {
-			for (int i = 1; i < 11; i++) {
-				well[i][j+1] = well[i][j];
-			}
-		}
-	}
-	
-        
-	// Clear completed rows from the field and award score according to
-	// the number of simultaneously cleared rows.
-	public void clearRows() {
-		boolean gap;
-		int numClears = 0;
-		
-		for (int j = 21; j > 0; j--) {
-			gap = false;
-			for (int i = 1; i < 11; i++) {
-				if (well[i][j] == Color.BLACK || well[i][j] == Color.DARK_GRAY) {
-					gap = true;
-					break;
-				}
-			}
-			if (!gap) {
-				deleteRow(j);
-				j += 1;
-				numClears += 1;
-                                linesCleared++;
-			}
-		}
-		
-		switch (numClears) {
-		case 1:
-			score += 10;
-                        gameSpeed-=20;
-			break;
-		case 2:
-			score += 30;
-                        gameSpeed-=30;
-			break;
-		case 3:
-			score += 60;
-                        gameSpeed-=40;
-			break;
-		case 4:
-			score += 100;
-                        gameSpeed-=50;
-			break;
-		}
-	}
-        
-	
-	// Draw the falling piece
-	private void drawPiece() {		
-		staticG.setColor(tetraminoColors[currentPiece[0]]);
-		for (Point p : Tetraminos[currentPiece[0]][rotation]) {
-			staticG.fillRect((p.x + pieceOrigin.x) * 26, 
-					   (p.y + pieceOrigin.y) * 26, 
-					   25, 25);
-		}
-	}
-        
-        private void drawGhostPiece(){
-            ghostOrigin = new Point(pieceOrigin.x, pieceOrigin.y);
-            
-            while(!collidesAt(ghostOrigin.x, ghostOrigin.y+1, rotation)){
-                ghostOrigin.y++;
-            }
-            
-            staticG.setColor(Color.DARK_GRAY);
-            for (Point p : Tetraminos[currentPiece[0]][rotation]) {
-			staticG.fillRect((p.x + ghostOrigin.x) * 26, 
-					   (p.y + ghostOrigin.y) * 26, 
-					   25, 25);
-		}
-            
-        }
-        
-//        
-//        private void clearGhostPiece(){
-//            staticG.setColor(Color.BLACK);
-//            for (Point p : Tetraminos[currentPiece][rotation]) {
-//			staticG.fillRect((p.x + ghostOrigin.x) * 26, 
-//					   (p.y + ghostOrigin.y) * 26, 
-//					   25, 25);
-//		}
-//        }
-//        
-	
-	@Override 
-	public void paintComponent(Graphics g){
-            // Paint the well
-            staticG = g;
-            staticG.fillRect(0, 0, 26*12, 26*23);
-            for (int i = 0; i < 18; i++) {
-                    for (int j = 0; j < 23; j++) {
-                            g.setColor(well[i][j]);
-                            if(i > 11){
-                                g.fillRect(26*i, 26*j, 26, 26);
-                            }else{
-                                g.fillRect(26*i, 26*j, 25, 25);
-                            }
 
+
+        for (int i = 0; i < 12; i++) { // columns
+                for (int j = 0; j < 23; j++) { //rows 
+                        if (i == 0 || i == 11 || j == 22) {  // left || right || bottom 
+                                well[i][j] = Color.GRAY;	// gray
+                        }
+                }
+        }
+    }
+    
+    
+    // Collision test for the dropping piece
+    private boolean collidesAt(int x, int y, int rotation) {
+            for (Point p : Tetraminos[currentPiece[0]][rotation]) {
+                    if (well[p.x + x][p.y + y] != Color.BLACK) {
+
+                        return true;
                     }
             }
-            
-            
-            try {
-                putPauseText();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(tetris.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            // Display UI
-            GameModeStatus();
-            scores(); 
-            level();
-            linesCleared();
-            // putPauseText();
+            return false;
+    }
 
-            // Display next piece
-            drawNextPiece();
-            
 
-            if(GameOver){
-                GameOver();
+    // Rotate the piece clockwise or counterclockwise
+    public void rotate(int i) {
+       // if(isCrazy) clearGhostPiece();
+
+            int newRotation = (rotation + i) % 4;
+            if (newRotation < 0) {
+                    newRotation = 3;
             }
-            else{
-                if(isCrazy) drawGhostPiece();
-                // Draw the currently falling piece
-                drawPiece();
-                
+            if (!collidesAt(pieceOrigin.x, pieceOrigin.y, newRotation)) {
+                    rotation = newRotation;
             }
-	}
-        
-        private void GameModeStatus(){
-            staticG.setFont(new Font("Arial", Font.BOLD, 20));
-            staticG.setColor(Color.BLACK);
-            if(isCrazy) staticG.drawString("Crazy",30*12-10, 25);
-            else staticG.drawString("Classic",30*12-15, 25);
+
+
+
+            repaint();
+    }
+
+
+    // Move the piece left or right
+    public void move(int i) {
+    //    if(isCrazy) clearGhostPiece();
+
+            if (!collidesAt(pieceOrigin.x + i, pieceOrigin.y, rotation)) {
+                    pieceOrigin.x += i;	
+            }
+
+
+            repaint();
+    }
+
+
+    // Drops the piece one line or fixes it to the well if it can't drop
+    public void dropDown() {
+  //      if(isCrazy) clearGhostPiece();
+
+            if (!collidesAt(pieceOrigin.x, pieceOrigin.y + 1, rotation)) {
+                    pieceOrigin.y += 1;
+            } else {
+                    fixToWell();
+            }
+
+
+            repaint();
+    }
+
+    public void SwapNextPiece(){
+    //    if(isCrazy) clearGhostPiece();
+
+        int swapTemp;
+        swapTemp = currentPiece[0];
+        currentPiece[0] = (int) nextPieces.get(0);
+        nextPieces.set(0, swapTemp);
+
+        repaint();
+    }
+
+
+    // Make the dropping piece part of the well, so it is available for
+    // collision detection.
+    public void fixToWell() {
+            for (Point p : Tetraminos[currentPiece[0]][rotation]) {
+                    well[pieceOrigin.x + p.x][pieceOrigin.y + p.y] = tetraminoColors[currentPiece[0]];
+                    wellID[pieceOrigin.x + p.x][pieceOrigin.y + p.y] = currentPiece[1];
+            }
+
+            //if(currentPiece[0] == 7) bombExplosion();
+            if(currentPiece[0] == 7) bombPieceDestroyer();
+            clearRows();
+            newPiece();
+    }
+
+
+    public void deleteRow(int row) {
+            for (int j = row-1; j > 0; j--) {
+                    for (int i = 1; i < 11; i++) {
+                            well[i][j+1] = well[i][j];
+                            wellID[i][j+1] = wellID[i][j];
+                    }
+            }
+    }
+
+
+    // Clear completed rows from the field and award score according to
+    // the number of simultaneously cleared rows.
+    public void clearRows() {
+            boolean gap;
+            int numClears = 0;
+
+            for (int j = 21; j > 0; j--) {
+                    gap = false;
+                    for (int i = 1; i < 11; i++) {
+                            if (well[i][j] == Color.BLACK || well[i][j] == Color.DARK_GRAY) {
+                                    gap = true;
+                                    break;
+                            }
+                    }
+                    if (!gap) {
+                            deleteRow(j);
+                            j += 1;
+                            numClears += 1;
+                            linesCleared++;
+                    }
+            }
+
+            switch (numClears) {
+            case 1:
+                    score += 10;
+                    gameSpeed-=20;
+                    break;
+            case 2:
+                    score += 30;
+                    gameSpeed-=30;
+                    break;
+            case 3:
+                    score += 60;
+                    gameSpeed-=40;
+                    break;
+            case 4:
+                    score += 100;
+                    gameSpeed-=50;
+                    break;
+            }
+    }
+
+
+    // Draw the falling piece
+    private void drawPiece() {		
+            staticG.setColor(tetraminoColors[currentPiece[0]]);
+            for (Point p : Tetraminos[currentPiece[0]][rotation]) {
+                    staticG.fillRect((p.x + pieceOrigin.x) * 26, 
+                                       (p.y + pieceOrigin.y) * 26, 
+                                       25, 25);
+            }
+    }
+
+    private void drawGhostPiece(){
+        ghostOrigin = new Point(pieceOrigin.x, pieceOrigin.y);
+
+        while(!collidesAt(ghostOrigin.x, ghostOrigin.y+1, rotation)){
+            ghostOrigin.y++;
         }
-            
-        
-        private void linesCleared(){
-            staticG.setFont(new Font("Arial", Font.BOLD, 15));
+
+        staticG.setColor(Color.DARK_GRAY);
+        for (Point p : Tetraminos[currentPiece[0]][rotation]) {
+                    staticG.fillRect((p.x + ghostOrigin.x) * 26, 
+                                       (p.y + ghostOrigin.y) * 26, 
+                                       25, 25);
+            }
+
+    }
+
+
+    @Override 
+    public void paintComponent(Graphics g){
+        // Paint the well
+        staticG = g;
+        staticG.fillRect(0, 0, 26*12, 26*23);
+        for (int i = 0; i < 18; i++) {
+                for (int j = 0; j < 23; j++) {
+                        g.setColor(well[i][j]);
+                        if(i > 11){
+                            g.fillRect(26*i, 26*j, 26, 26);
+                        }else{
+                            g.fillRect(26*i, 26*j, 25, 25);
+                        }
+
+                }
+        }
+
+
+        try {
+            putPauseText();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(tetris.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        // Display UI
+        GameModeStatus();
+        scores(); 
+        level();
+        linesCleared();
+        // putPauseText();
+
+        // Display next piece
+        drawNextPiece();
+
+
+        if(GameOver){
+            GameOver();
+        }
+        else{
+            if(isCrazy) drawGhostPiece();
+            // Draw the currently falling piece
+            drawPiece();
+
+        }
+    }
+
+    private void GameModeStatus(){
+        staticG.setFont(new Font("Arial", Font.BOLD, 20));
+        staticG.setColor(Color.BLACK);
+        if(isCrazy) staticG.drawString("Crazy",30*12-10, 25);
+        else staticG.drawString("Classic",30*12-15, 25);
+    }
+
+
+    private void linesCleared(){
+        staticG.setFont(new Font("Arial", Font.BOLD, 15));
+        staticG.setColor(Color.WHITE);
+        staticG.drawString("Lines",30*13, 26*7);
+
+        staticG.drawString(String.valueOf(linesCleared),26*15+13, 26*8);
+    }
+
+
+    private void level(){
+        staticG.setFont(new Font("Arial", Font.BOLD, 15));
+        staticG.setColor(Color.WHITE);
+        staticG.drawString("Level",30*11, 26*7);
+        int level;
+        if(gameSpeed > 900) level = 1;
+        else if(gameSpeed > 800) level = 2;
+        else if(gameSpeed > 700) level = 3;
+        else if(gameSpeed > 600) level = 4;
+        else if(gameSpeed > 500) level = 5;
+        else if(gameSpeed > 400) level = 6;
+        else if(gameSpeed > 300) level = 7;
+        else if(gameSpeed > 200) level = 8;
+        else level = 9;
+
+        staticG.drawString(String.valueOf(level),30*11+18, 26*8);
+
+    }
+
+
+    private void drawNextPiece() {	
+        staticG.setFont(new Font("Arial", Font.BOLD, 15));
+        staticG.setColor(Color.WHITE);
+        staticG.drawString("Next Piece:",30*11, 26*3);
+
+
+        staticG.setColor(tetraminoColors[nextPieces.get(0)]);
+        for (Point p : Tetraminos[nextPieces.get(0)][0]) {
+                staticG.fillRect((p.x + 13) * 26, 
+                                   (p.y + 4) * 26, 
+                                   25,        25);
+        }
+    }
+
+
+    public static void saveHighScore(){
+    JPanel panel = new JPanel(new GridLayout(1,2));
+
+        panel.add(hst);
+        panel.add(bt);
+        hst.setBounds(26*7-13, 26*11, 26*4, 25);
+        bt.setBounds(26*8-13, 26*12, 26*3, 25);
+
+        saveFrame.setSize(10*26+10, 2*30);
+        saveFrame.add(panel);
+        saveFrame.setResizable(false);
+
+        saveFrame.setVisible(true);
+    }
+
+
+    private void GameOver(){
+            staticG.setFont(new Font("Arial", Font.BOLD, 30));
             staticG.setColor(Color.WHITE);
-            staticG.drawString("Lines",30*13, 26*7);
-            
-            staticG.drawString(String.valueOf(linesCleared),26*15+13, 26*8);
-        }
-        
-        
-        private void level(){
-            staticG.setFont(new Font("Arial", Font.BOLD, 15));
-            staticG.setColor(Color.WHITE);
-            staticG.drawString("Level",30*11, 26*7);
-            int level;
-            if(gameSpeed > 900) level = 1;
-            else if(gameSpeed > 800) level = 2;
-            else if(gameSpeed > 700) level = 3;
-            else if(gameSpeed > 600) level = 4;
-            else if(gameSpeed > 500) level = 5;
-            else if(gameSpeed > 400) level = 6;
-            else if(gameSpeed > 300) level = 7;
-            else if(gameSpeed > 200) level = 8;
-            else level = 9;
-            
-            staticG.drawString(String.valueOf(level),30*11+18, 26*8);
-            
-        }
-	
-        
-	private void drawNextPiece() {	
-            staticG.setFont(new Font("Arial", Font.BOLD, 15));
-            staticG.setColor(Color.WHITE);
-            staticG.drawString("Next Piece:",30*11, 26*3);
+            staticG.drawString("GAME OVER!",26*5, 26*11);
 
 
-            staticG.setColor(tetraminoColors[nextPieces.get(0)]);
-            for (Point p : Tetraminos[nextPieces.get(0)][0]) {
-                    staticG.fillRect((p.x + 13) * 26, 
-                                       (p.y + 4) * 26, 
-                                       25,        25);
+            if(highScoreList.size() < 5){
+                saveHighScore();
             }
-	}
-        
-        
-        public static void saveHighScore(){
-        	JPanel panel = new JPanel(new GridLayout(1,2));
-            panel.add(hst);
-            panel.add(bt);
-            hst.setBounds(26*7-13, 26*11, 26*4, 25);
-            bt.setBounds(26*8-13, 26*12, 26*3, 25);
-            
-            saveFrame.setSize(10*26+10, 2*30);
-            saveFrame.add(panel);
-            
-            saveFrame.setVisible(true);
-        }
-        
-	
-	private void GameOver(){
-		staticG.setFont(new Font("Arial", Font.BOLD, 30));
-		staticG.setColor(Color.WHITE);
-		staticG.drawString("GAME OVER!",26*5, 26*11);
-                
-                
-                if(highScoreList.size() < 5){
+            else {
+                if(highScoreList.get(4).point < score){
                     saveHighScore();
                 }
-                else {
-                    if(highScoreList.get(4).point < score){
-                        saveHighScore();
-                    }
-                } 
-	}
-        
-	
-	private void scores(){
-		// High Scores
-		staticG.setFont(new Font("Arial", Font.BOLD, 18));
-		staticG.setColor(Color.RED);
-		staticG.drawString("--High Scores--", 26*12+13, 26*15+50);
-		
-		int ScoresY = 465;
-		
-		
-                for(Score A : highScoreList){
-                    staticG.setFont(new Font("Arial",Font.PLAIN,18));
-                    staticG.setColor(Color.WHITE);
-                    staticG.drawString(A.PlayerName, 325 , ScoresY+= 15);
-                    staticG.drawString(String.valueOf(A.point), 415 , ScoresY);
-                }
-                
-                
-                
-		
-		// Current Score
-		staticG.setFont(new Font("Arial", Font.BOLD, 15));
-		staticG.setColor(Color.WHITE);
-		staticG.drawString("Score: " + score, 30*11, 50);
-	}
-        
+            } 
+    }
+
+
+    private void scores(){
+            // High Scores
+            staticG.setFont(new Font("Arial", Font.BOLD, 18));
+            staticG.setColor(Color.RED);
+            staticG.drawString("--High Scores--", 26*12+13, 26*15+50);
+
+            int ScoresY = 465;
+
+
+            for(Score A : highScoreList){
+                staticG.setFont(new Font("Arial",Font.PLAIN,18));
+                staticG.setColor(Color.WHITE);
+                staticG.drawString(A.PlayerName, 325 , ScoresY+= 15);
+                staticG.drawString(String.valueOf(A.point), 415 , ScoresY);
+            }
+
+
+
+
+            // Current Score
+            staticG.setFont(new Font("Arial", Font.BOLD, 15));
+            staticG.setColor(Color.WHITE);
+            staticG.drawString("Score: " + score, 30*11, 50);
+    }
+
         
     private void ReadHighScoreFile() throws FileNotFoundException, IOException{
-        File file = new File("HighScores.txt");
+        String filename;
+        if(isCrazy) filename = "CrazyHighScores.txt";
+        else filename = "HighScores.txt";
+        
+        File file = new File(filename);
         if(!file.exists()){
         	file.createNewFile();
         }
@@ -668,8 +678,9 @@ public class tetris extends JPanel {
     
     public static void startGame() throws IOException{
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setSize(18*26+10, 26*23+25);
+        f.setSize(18*26, 26*23+25);
         f.setVisible(true);
+        f.setResizable(false);
         
         game.init();
         f.add(game);
@@ -682,8 +693,10 @@ public class tetris extends JPanel {
 		
                 JFrame fmod = new JFrame("Pick Mode");
                 
+                
                 fmod.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 fmod.setSize(10*26+10, 3*23+25);
+                fmod.setResizable(false);
                 fmod.setVisible(true);
                 
                 JPanel panel = new JPanel(new GridLayout(1,2));
@@ -743,6 +756,7 @@ public class tetris extends JPanel {
                                     if(i == 5) break;
                                 }   bt.setVisible(false);
                                 hst.setVisible(false);
+                                saveFrame.setVisible(false);
                             } catch (FileNotFoundException ex) {
                                 Logger.getLogger(tetris.class.getName()).log(Level.SEVERE, null, ex);
                             } finally {
