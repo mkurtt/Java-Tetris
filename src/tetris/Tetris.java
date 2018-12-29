@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package tetris;
+package asd;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -31,7 +31,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class Tetris extends JPanel {
+public class tetris extends JPanel {
 	
 	//        [pieces] [rotations] [coordinates]
 	private final Point[][][] Tetraminos = {
@@ -105,60 +105,60 @@ public class Tetris extends JPanel {
 	private final Color[] tetraminoColors = {
 		Color.cyan, Color.blue, Color.orange, Color.yellow, Color.green, Color.pink, Color.red, Color.white
 	};
-	
-        static private JFrame f = new JFrame("Tetris");
-        static private JFrame saveFrame = new JFrame("Save");
-        static private JButton bt = new JButton("Save");  
-        static private JTextField hst = new JTextField();
-        
+
+    static private JFrame f = new JFrame("Tetris");
+    static private JFrame saveFrame = new JFrame("Save");
+    static private JButton bt = new JButton("Save");  
+    static private JTextField hst = new JTextField();
+    
 	static private Point pieceOrigin;
-        static private Point ghostOrigin;
-	private int currentPiece; // current piece index
+    static private Point ghostOrigin;
+	private int[] currentPiece = new int[2]; // current piece index
 	private int rotation; // rotation index
 	private ArrayList<Integer> nextPieces = new ArrayList<Integer>();
-	
+	private int nextPieceID = 0;
         
-        static private boolean gonnaPause = false;
 	static private boolean GameOver = false;
-        static private int gameSpeed = 1000;
-        static private int linesCleared = 0;
-        static private boolean isCrazy = false;
-        static public boolean Continue = false; // helps us coose Classic or Crazy mod
-        
-        
-        static final Tetris game = new Tetris();
-        static private GameThread Thread2 = new GameThread();
-        static Graphics staticG ;
-	
-        static class Score implements Comparable<Score>{
-            public String PlayerName;
-            public int point;
-            
-            @Override
-            public int compareTo(Score comparePoint) {
-                int compScore = ((Score)comparePoint).point;
-                return compScore-this.point;
-            }
-        }
-        
-        static private ArrayList<Score> highScoreList = new ArrayList<Score>();
-        
-        
-        
+    static private int gameSpeed = 1000;
+    static private int linesCleared = 0;
+    static private boolean isCrazy = false;
+    static public boolean Continue = false; // helps us coose Classic or Crazy mod
+    
+    
+    static final tetris game = new tetris();
+    static private GameThread Thread2 = new GameThread();
+    static Graphics staticG ;
 
+    static class Score implements Comparable<Score>{
+        public String PlayerName;
+        public int point;
+        
+        @Override
+        public int compareTo(Score comparePoint) {
+            int compScore = ((Score)comparePoint).point;
+            return compScore-this.point;
+        }
+    }
+    
+    static private ArrayList<Score> highScoreList = new ArrayList<Score>();
+    
 	static public int score;
 	private Color[][] well;
+	private int[][] wellID;
 	
         
 	// Creates a border around the well and initializes the dropping piece
 	private void init() throws IOException {
+		wellID = new int [12][24];
 		well = new Color[19][24]; //play area size 
 		for (int i = 0; i < 11; i++) { // columns
 			for (int j = 0; j < 23; j++) { //rows 
 				if (i == 0 || i == 11 || j == 22) {  // left || right || bottom 
 					well[i][j] = Color.GRAY;	// gray
+					wellID[i][j] = 0;
 				} else {			// rest is black
 					well[i][j] = Color.BLACK;
+					wellID[i][j] = 0;
 				}
 			}
 		}
@@ -166,11 +166,31 @@ public class Tetris extends JPanel {
 		newPiece();
 	}
 	
+	
+	public int GenerateUniqueID(Random rnd){
+    	boolean A = false;
+    	int ID;
+    	while(true){
+    		ID = rnd.nextInt(10000) + 10000;
+    		for (int i = 0; i < 11; i++) { // columns
+    			for (int j = 0; j < 23; j++) { //rows 
+    				if(wellID[i][j] == ID){
+    					A = true;
+    					break;
+    				}
+    			}
+    			if(A) break;
+    		}
+    		if(!A) break;
+    	}
+    	return ID;
+    }
+	
         
 	// Put a new, random piece into the dropping position
 	public void newPiece() {
             
-            if(currentPiece == 7) bombExplosion();
+            
             
 		pieceOrigin = new Point(5, 2); // center top coordinates
 		rotation = 0;
@@ -185,33 +205,66 @@ public class Tetris extends JPanel {
 			Collections.addAll(nextPieces, 0, 1, 2, 3, 4, 5, 6);
                         if (isCrazy) nextPieces.add(7);
 			Collections.shuffle(nextPieces);
+			nextPieceID = GenerateUniqueID(rnd);
 		}
-		currentPiece = nextPieces.get(0);
+		currentPiece[1] = nextPieceID;
+		currentPiece[0] = nextPieces.get(0);
 		nextPieces.remove(0);
-                if (isCrazy) nextPieces.add(rnd.nextInt(8));
-                else nextPieces.add(rnd.nextInt(7));
+		
+		nextPieceID = GenerateUniqueID(rnd);
+        if (isCrazy) nextPieces.add(rnd.nextInt(8));
+        else nextPieces.add(rnd.nextInt(7));
+	}
+	
+	
+	//fix to Well with ID
+	private void fixToWell(int ID){
+		
+	}
+	
+	
+	private void destroyingTetraminos(int x, int y){
+		if(wellID[x][y] == 0 || wellID[x][y] == currentPiece[1] ){
+			fixToWell(wellID[x][y]);
+		}
+	}
+	
+    // REMOVES TETRAMINOS AROUND
+	private void bombPieceDestroyer(){
+		
+		//for each piece of the tetramino
+		for (Point p : Tetraminos[currentPiece[0]][rotation]) {
+			
+			// for all sides of each tetramino
+			destroyingTetraminos(p.x + pieceOrigin.x + 1, p.y + pieceOrigin.y);
+			destroyingTetraminos(p.x + pieceOrigin.x - 1, p.y + pieceOrigin.y);
+			destroyingTetraminos(p.x + pieceOrigin.x, p.y + pieceOrigin.y + 1);
+			destroyingTetraminos(p.x + pieceOrigin.x, p.y + pieceOrigin.y - 1);
+		}
 	}
 	
         
-        private void bombExplosion(){
-            well[pieceOrigin.x+1][pieceOrigin.y+2] = Color.BLACK;
-            well[pieceOrigin.x][pieceOrigin.y+2] = Color.BLACK;
-            well[pieceOrigin.x+1][pieceOrigin.y+3] = Color.BLACK;
-            well[pieceOrigin.x+2][pieceOrigin.y+2] = Color.BLACK;
-            well[pieceOrigin.x+1][pieceOrigin.y+1] = Color.BLACK;
-            for (int i = 0; i < 11; i++) { // columns
+    private void bombExplosion(){
+        well[pieceOrigin.x+1][pieceOrigin.y+2] = Color.BLACK;
+        well[pieceOrigin.x][pieceOrigin.y+2] = Color.BLACK;
+        well[pieceOrigin.x+1][pieceOrigin.y+3] = Color.BLACK;
+        well[pieceOrigin.x+2][pieceOrigin.y+2] = Color.BLACK;
+        well[pieceOrigin.x+1][pieceOrigin.y+1] = Color.BLACK;
+        
+        
+        for (int i = 0; i < 12; i++) { // columns
 			for (int j = 0; j < 23; j++) { //rows 
 				if (i == 0 || i == 11 || j == 22) {  // left || right || bottom 
 					well[i][j] = Color.GRAY;	// gray
 				}
 			}
 		}
-        }
+    }
         
         
 	// Collision test for the dropping piece
 	private boolean collidesAt(int x, int y, int rotation) {
-		for (Point p : Tetraminos[currentPiece][rotation]) {
+		for (Point p : Tetraminos[currentPiece[0]][rotation]) {
 			if (well[p.x + x][p.y + y] != Color.BLACK) {
                             
                             return true;
@@ -270,8 +323,8 @@ public class Tetris extends JPanel {
         //    if(isCrazy) clearGhostPiece();
             
             int swapTemp;
-            swapTemp = currentPiece;
-            currentPiece = nextPieces.get(0);
+            swapTemp = currentPiece[0];
+            currentPiece[0] = (int) nextPieces.get(0);
             nextPieces.set(0, swapTemp);
             
             repaint();
@@ -281,9 +334,10 @@ public class Tetris extends JPanel {
 	// Make the dropping piece part of the well, so it is available for
 	// collision detection.
 	public void fixToWell() {
-		for (Point p : Tetraminos[currentPiece][rotation]) {
-			well[pieceOrigin.x + p.x][pieceOrigin.y + p.y] = tetraminoColors[currentPiece];
+		for (Point p : Tetraminos[currentPiece[0]][rotation]) {
+			well[pieceOrigin.x + p.x][pieceOrigin.y + p.y] = tetraminoColors[currentPiece[0]];
 		}
+		if(currentPiece[0] == 7) bombExplosion();
 		clearRows();
 		newPiece();
 	}
@@ -343,8 +397,8 @@ public class Tetris extends JPanel {
 	
 	// Draw the falling piece
 	private void drawPiece() {		
-		staticG.setColor(tetraminoColors[currentPiece]);
-		for (Point p : Tetraminos[currentPiece][rotation]) {
+		staticG.setColor(tetraminoColors[currentPiece[0]]);
+		for (Point p : Tetraminos[currentPiece[0]][rotation]) {
 			staticG.fillRect((p.x + pieceOrigin.x) * 26, 
 					   (p.y + pieceOrigin.y) * 26, 
 					   25, 25);
@@ -359,7 +413,7 @@ public class Tetris extends JPanel {
             }
             
             staticG.setColor(Color.DARK_GRAY);
-            for (Point p : Tetraminos[currentPiece][rotation]) {
+            for (Point p : Tetraminos[currentPiece[0]][rotation]) {
 			staticG.fillRect((p.x + ghostOrigin.x) * 26, 
 					   (p.y + ghostOrigin.y) * 26, 
 					   25, 25);
@@ -399,7 +453,7 @@ public class Tetris extends JPanel {
             try {
                 putPauseText();
             } catch (InterruptedException ex) {
-                Logger.getLogger(Tetris.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(tetris.class.getName()).log(Level.SEVERE, null, ex);
             }
             // Display UI
             GameModeStatus();
@@ -476,16 +530,16 @@ public class Tetris extends JPanel {
         
         
         public static void saveHighScore(){
-                    JPanel panel = new JPanel(new GridLayout(1,2));
+        	JPanel panel = new JPanel(new GridLayout(1,2));
+            panel.add(hst);
+            panel.add(bt);
+            hst.setBounds(26*7-13, 26*11, 26*4, 25);
+            bt.setBounds(26*8-13, 26*12, 26*3, 25);
             
-                    hst.setBounds(26*7-13, 26*11, 26*4, 25);
-                    bt.setBounds(26*8-13, 26*12, 26*3, 25);
-                    panel.add(hst);
-                    panel.add(bt);
-                    saveFrame.add(panel,BorderLayout.CENTER);
-                    
-                    
-                    saveFrame.setVisible(true);
+            saveFrame.setSize(10*26+10, 2*30);
+            saveFrame.add(panel);
+            
+            saveFrame.setVisible(true);
         }
         
 	
@@ -532,102 +586,96 @@ public class Tetris extends JPanel {
 	}
         
         
-        private void ReadHighScoreFile() throws FileNotFoundException, IOException{
-            File file = new File("HighScores.txt");
-		if(!file.exists()){
-			file.createNewFile();
-		}
-		BufferedReader bfr = new BufferedReader(new FileReader(file));
-		String scoreLine = "";
-                
-                while((scoreLine = bfr.readLine()) != null){
+    private void ReadHighScoreFile() throws FileNotFoundException, IOException{
+        File file = new File("HighScores.txt");
+        if(!file.exists()){
+        	file.createNewFile();
+        }
+        BufferedReader bfr = new BufferedReader(new FileReader(file));
+        String scoreLine = "";
+            
+        while((scoreLine = bfr.readLine()) != null){
 			String[] data = scoreLine.split(" ");
-                        Score A = new Score();
-                        A.PlayerName = data[0];
-                        A.point = Integer.valueOf(data[1]);
-                        highScoreList.add(A);
-		}
-                bfr.close();
-        }
+	        Score A = new Score();
+	        A.PlayerName = data[0];
+	        A.point = Integer.valueOf(data[1]);
+	        highScoreList.add(A);
+    	}
+        bfr.close();
+    }
         
-        static private void pause() throws InterruptedException {
-            if(Thread2.running) Thread2.pauseThread();
-            else Thread2.resumeThread();
-        }
+    static private void pause() throws InterruptedException {
+        if(Thread2.running) Thread2.pauseThread();
+        else Thread2.resumeThread();
+    }
         
-        public static void ActivateCrazyMod(){
-            isCrazy = true;
-        }
+    public static void ActivateCrazyMod(){
+        isCrazy = true;
+    }
         
-        static private void putPauseText() throws InterruptedException{
+    static private void putPauseText() throws InterruptedException{
+            
+        if(!Thread2.running){
+            staticG.setFont(new Font("Arial", Font.BOLD, 30));
+            staticG.setColor(Color.WHITE);
+            staticG.drawString("PAUSED",26*5, 26*11);
+        }
+        else{
+            staticG.setFont(new Font("Arial", Font.BOLD, 30));
+            staticG.setColor(Color.WHITE);
+            staticG.drawString("             ",26*5, 26*11);
+        }           
+    }
+        
+        
+        
+    static class GameThread extends Thread{
+        private volatile boolean running = true;
+        
+        @Override
+        public void run(){
+            while(true){
+                // Only keep painting while "running" is true
+                // This is a crude implementation of pausing the thread
+                while (!running)
+                    Thread.yield();
+
+                try {
+                    Thread.sleep(gameSpeed);
+					if(GameOver){
+									
+					}else
+			        	game.dropDown();
+		
+				} 
+                catch ( InterruptedException e ) {}
                 
-                if(!Thread2.running){
-                    staticG.setFont(new Font("Arial", Font.BOLD, 30));
-                    staticG.setColor(Color.WHITE);
-                    staticG.drawString("PAUSED",26*5, 26*11);
-                }
-                else{
-                    staticG.setFont(new Font("Arial", Font.BOLD, 30));
-                    staticG.setColor(Color.WHITE);
-                    staticG.drawString("             ",26*5, 26*11);
-                }           
-        }
-        
-        
-        
-        static class GameThread extends Thread{
-            private volatile boolean running = true;
-            
-            @Override
-            public void run(){
-                while(true){
-                    // Only keep painting while "running" is true
-                    // This is a crude implementation of pausing the thread
-                    while (!running)
-                        Thread.yield();
-
-                    try {
-                        Thread.sleep(gameSpeed);
-			if(GameOver){
-							
-			}else
-                            game.dropDown();
-
-			} 
-                    catch ( InterruptedException e ) {}
-                    
-                    
-                }
-            }
-
-            public void pauseThread() throws InterruptedException{
-                running = false;
-                game.paintComponent(staticG);
-            }
-
-            public void resumeThread() throws InterruptedException{
-                running = true;
-                game.paintComponent(staticG);
-            }
-        }
-        
-        
-        public static void startGame() throws IOException{
-            
-            
-                        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                        f.setSize(18*26+10, 26*23+25);
-                        f.setVisible(true);
-                        
-                        game.init();
-                        f.add(game);
-            
-                        
-                        
-                Thread2.start();
                 
-            
+            }
         }
+
+        public void pauseThread() throws InterruptedException{
+            running = false;
+            game.paintComponent(staticG);
+        }
+
+        public void resumeThread() throws InterruptedException{
+            running = true;
+            game.paintComponent(staticG);
+        }
+    }
+    
+    
+    public static void startGame() throws IOException{
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setSize(18*26+10, 26*23+25);
+        f.setVisible(true);
+        
+        game.init();
+        f.add(game);
+    
+        Thread2.start();
+    }
         
 	public static void main(String[] args) throws IOException, InterruptedException{
 		
@@ -653,7 +701,7 @@ public class Tetris extends JPanel {
                             try {
                                 startGame();
                             } catch (IOException ex) {
-                                Logger.getLogger(Tetris.class.getName()).log(Level.SEVERE, null, ex);
+                                Logger.getLogger(tetris.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
                         else if(e.getSource() == btCrazy){
@@ -662,7 +710,7 @@ public class Tetris extends JPanel {
                             try {
                                 startGame();
                             } catch (IOException ex) {
-                                Logger.getLogger(Tetris.class.getName()).log(Level.SEVERE, null, ex);
+                                Logger.getLogger(tetris.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
                     }
@@ -696,7 +744,7 @@ public class Tetris extends JPanel {
                                 }   bt.setVisible(false);
                                 hst.setVisible(false);
                             } catch (FileNotFoundException ex) {
-                                Logger.getLogger(Tetris.class.getName()).log(Level.SEVERE, null, ex);
+                                Logger.getLogger(tetris.class.getName()).log(Level.SEVERE, null, ex);
                             } finally {
                                 pr.close();
                             }
@@ -750,7 +798,7 @@ public class Tetris extends JPanel {
                                     try {
                                         pause();
                                     } catch (InterruptedException ex) {
-                                        Logger.getLogger(Tetris.class.getName()).log(Level.SEVERE, null, ex);
+                                        Logger.getLogger(tetris.class.getName()).log(Level.SEVERE, null, ex);
                                     }
                                 }
                                         break;
