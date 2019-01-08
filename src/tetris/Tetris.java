@@ -31,6 +31,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+
+// 201611412 METEHAN GOKSEL KURTULAN
+// for details of the project
+// https://github.com/mkurtt/Java-Tetris
+
 public class tetris extends JPanel {
 	
 	//        [pieces] [rotations] [coordinates]
